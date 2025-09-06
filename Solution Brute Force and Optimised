@@ -1,0 +1,75 @@
+                                                                  **Brute Force Solution**
+class Solution {
+    public long minOperations(int[][] queries) {
+        long operations = 0;
+
+        for (int i = 0; i < queries.length; i++) {
+            int lb = queries[i][0];
+            int ub = queries[i][queries[0].length - 1];
+
+            int[] arr = new int[ub - lb + 1];
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = lb;
+                lb++;
+            }
+
+            HashMap<Integer, Integer> hs = new HashMap<>();
+            for (int k = 0; k < arr.length; k++) {
+                int original = arr[k];
+                int count = 0;
+                while (arr[k] != 0) {
+                    arr[k] /= 4;
+                    count++;
+                }
+                hs.put(original, count);
+            }
+
+            long total = 0;
+            for (int val : hs.values()) {
+                total += val;
+            }
+
+            operations += (total + 1) / 2; // ceil(total/2)
+        }
+
+        return operations;
+    }
+}
+
+
+                                                                    **Optimised Solution**
+
+
+
+class Solution {
+    private long stepsInRange(int l, int r) {
+        long total = 0;
+        long pow = 1;
+        int step = 1;
+        while (pow <= r) {
+            long left = (long)pow;
+            long right = Math.min((long)pow * 4 - 1, r);
+
+            if (right >= l) {
+                long overlap = Math.min(right, r) - Math.max(left, l) + 1;
+                if (overlap > 0) {
+                    total += overlap * step;
+                }
+            }
+            pow *= 4;
+            step++;
+        }
+        return total;
+    }
+
+    public long minOperations(int[][] queries) {
+        long totalOps = 0;
+        for (int[] q : queries) {
+            int l = q[0], r = q[1];
+            long totalSteps = stepsInRange(l, r);
+            totalOps += (totalSteps + 1) / 2;
+        }
+        return totalOps;
+    }
+}
+     
